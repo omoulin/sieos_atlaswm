@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Files
+Comment=Atlas's file manager
+Exec=atlas-files %U
+Icon=system-file-manager
+Type=Application
+Categories=System;FileManager;
+MimeType=inode/directory;

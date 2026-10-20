@@ -1,0 +1,3 @@
+#%PAM-1.0
+# atlas_wm's lock screen (src/lock.c): your own password opens it
+@include common-auth

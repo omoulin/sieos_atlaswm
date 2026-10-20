@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Atlas
+Comment=SIEOS's Atlas desktop: title tabs, the Deskbar, workspaces, in glass
+Exec=atlas_wm
+TryExec=atlas_wm
+Type=Application
+DesktopNames=atlas

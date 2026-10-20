@@ -1,0 +1,9 @@
+# The apps (copy to ~/.config/atlas/apps, or use Settings > Apps): name | icon | command | app_id | dock or menu
+# icon: terminal, folder, editor, web, mail, settings, git, camera, app, window
+# app_id: which windows are the app's (the strip shows it when a window's tab is up)
+# dock: in the cube's menu and on the Deskbar; menu: in the menu only
+Terminal    | terminal | foot -T Term --app-id=Term -o colors.background=1b254a -o colors.foreground=c9d1ec -o 'font=DejaVu Sans Mono:size=12' | Term | dock
+Files       | folder   | atlas-files                     | atlas.files | dock
+Text editor | editor   | gnome-text-editor --new-window  | org.gnome.TextEditor | dock
+Web         | web      | firefox-esr                     | firefox-esr | dock
+Mail        | mail     | thunderbird                     | thunderbird | menu
