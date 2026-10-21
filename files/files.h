@@ -2,7 +2,8 @@
  * files.h - atlas-files: a file manager in Atlas's look (README.md, Files).
  * wl.c is the window (a Wayland client: buffers, input, a loop); files.c
  * is the file manager, drawn with atlas_wm's display list (src/draw.c,
- * src/look.c, src/icons.c) in the picture's units.
+ * src/look.c, src/icons.c) in the picture's units. atlas-net (net/net.c)
+ * is a window of the same kind: wl.c, and the fm_ calls of its own.
  *
  * Part of atlas_wm. (c) Olivier Moulin. SPDX-License-Identifier: GPL-3.0-only
  */

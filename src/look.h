@@ -69,7 +69,7 @@ void hitbox(int x0, int y0, int x1, int y1, int kind, int arg);
 const hit_t *hits_at(const hits_t *hs, int x, int y); /* the last box holding (x, y), or 0 */
 
 /* ---- Icons (icons.c): 16 x 16 pixel maps, in a box of 12 x scale; the logo, a picture (logo.c). */
-enum { I_TERM, I_SIA, I_FOLDER, I_FILE, I_SETTINGS, I_APP, I_WINDOW, I_PINS, I_GIT, I_MAIL, I_CAM, I_WEB, I_N };
+enum { I_TERM, I_SIA, I_FOLDER, I_FILE, I_SETTINGS, I_APP, I_WINDOW, I_PINS, I_GIT, I_MAIL, I_CAM, I_WEB, I_NET, I_N };
 void icon(int kind, int x, int y, int scale);
 void icon_ink(int kind, int x, int y, int scale, int white);   /* its outline only, in C_INK (on the accent: a tab) or white (on clear glass) */
 void logo(int x, int y, int scale);                   /* 16 x scale wide */

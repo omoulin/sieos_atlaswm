@@ -28,7 +28,8 @@ Two protocol files from wlr-protocols (layer shell, output power) are in
 `protocol/`, since wayland-protocols does not ship them.
 
 `foot` is optional: the Deskbar uses the first terminal it finds (foot,
-GNOME Console, Alacritty, kitty, Konsole, GNOME Terminal).
+GNOME Console, Alacritty, kitty, Konsole, GNOME Terminal). `atlas-net`
+needs NetworkManager (`network-manager`, which has `nmcli`).
 
 ## Running
 
@@ -206,6 +207,51 @@ what is behind it.)
   managers share it. In it, *Restore* puts things back where they were and
   *Empty Trash* empties it.
 
+### Network
+
+`atlas-net` is Atlas's network window, built and installed with it: the
+cube's menu has it as *Network* (`atlas-net devices` opens a page by its
+name). Like Files it is a Wayland app of its own in Atlas's look; the work
+is done by NetworkManager, through `nmcli`. It is laid out as Settings: its
+pages in a sidebar, each one's rows on a card.
+
+- **Wi-Fi:** on or off, the connection now and its address, the networks
+  in range (the one in use first, then the strongest), with their signal,
+  their security and whether they are saved. *Scan* looks again. Click a
+  network for what can be done with it: *Connect* (a new one asks for its
+  passphrase; *Show* shows what is typed), *Disconnect*, *Forget*.
+  *Hidden network...* connects to one by its name. WPA2 and WPA3 personal,
+  OWE and open networks; enterprise (802.1X) and WEP ones are not done here.
+- **Connections:** the profiles NetworkManager keeps (the ones in use
+  marked, with their device). Click one to change its name, whether it
+  connects by itself, its IPv4 (automatic, manual with its addresses and
+  gateway, shared, off), its DNS servers and its IPv6; *Save* changes only
+  what was changed, and a profile in use is brought up again so it takes
+  effect. *Connect*, *Disconnect*, *Delete* (asked first).
+- **Devices:** networking on or off (off asked first), the state and
+  whether the internet answers, the hostname, then each device: its state,
+  connection, hardware address, IPv4 and IPv6 addresses, gateway and DNS,
+  with *Connect* or *Disconnect*.
+
+`nmcli` runs in processes of its own: questions at once (they answer in
+milliseconds), actions one at a time in the background, so a 30-second
+connection never stops the window; the status bar says how each went, in
+NetworkManager's words. `nmcli monitor` says when something changes, and
+the window asks again then (and every 10 s, for the signals). A passphrase
+never goes on a command line, where `ps` would show it: a new network's
+profile is added without it, then brought up with the passphrase in a
+`passwd-file` that only exists in memory (a memfd); NetworkManager keeps it
+in the profile, as it does for its own applets. A saved network whose
+passphrase changed: *Forget* it, then *Connect*.
+
+What NetworkManager lets a user do is polkit's decision: in a local
+session, usually everything; otherwise its refusal shows in the status
+bar.
+
+Keys: Up and Down choose a network or a profile, Enter connects (in a
+field: what the field is for), Tab goes to the next field, Delete forgets,
+F5 scans, Ctrl+Page Up / Page Down change pages, Ctrl+W closes.
+
 ### Keys
 
 Super is the Windows key. Ctrl-based keys would collide with the apps.
@@ -309,6 +355,7 @@ minimize, zoom, make it full screen or close it.
 | `lock.c` | screen lockers (ext-session-lock), idling |
 | `settings.c` | the Settings window: screens, size, mouse, the Deskbar's apps |
 | `files/` | atlas-files: `wl.c` the window (a Wayland client: shm buffers at the screen's scale, input), `files.c` the file manager |
+| `net/` | atlas-net: `net.c` the network window, driving `nmcli` (with `files/wl.c` as its window) |
 | `toplevels.c` | the window list for taskbars (wlr-foreign-toplevel, ext-foreign-toplevel-list) |
 | `wm.c` | the window manager, from SIEOS's `wm.c`: tabs, placement, moving, resizing, workspaces |
 | `deskbar.c` | the Deskbar, the desk, the menus, starting apps |

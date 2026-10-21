@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Network
+Comment=Atlas's network settings: Wi-Fi, connections, devices (NetworkManager)
+Exec=atlas-net
+Icon=preferences-system-network
+Type=Application
+Categories=System;Settings;Network;
+Keywords=wifi;wi-fi;wireless;ethernet;nmcli;

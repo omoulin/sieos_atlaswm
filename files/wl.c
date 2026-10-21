@@ -1,5 +1,6 @@
 /*
- * wl.c - atlas-files' window: a Wayland client of its own, no toolkit.
+ * wl.c - atlas-files' window (and atlas-net's): a Wayland client of its
+ * own, no toolkit.
  *
  * One xdg-shell toplevel, decorated by the compositor (xdg-decoration:
  * Atlas draws its tab and frame). Its picture is drawn with Atlas's
@@ -75,7 +76,7 @@ static void buf_release(void *data, struct wl_buffer *b) { (void)b; ((struct buf
 static const struct wl_buffer_listener buf_listener = { buf_release };
 static int shm_fd(size_t len)
 {
-    int fd = memfd_create("atlas-files", MFD_CLOEXEC);
+    int fd = memfd_create(program_invocation_short_name, MFD_CLOEXEC);
     if (fd >= 0 && ftruncate(fd, (off_t)len) < 0) { close(fd); fd = -1; }
     return fd;
 }
@@ -371,12 +372,12 @@ void win_open(const char *title, const char *app_id)
     look_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
     if (look_fd >= 0 && inotify_add_watch(look_fd, look_dir, IN_CLOSE_WRITE | IN_MOVED_TO) >= 0) win_fd(look_fd, look_changed);
     dpy = wl_display_connect(NULL);
-    if (!dpy) { fprintf(stderr, "atlas-files: no Wayland display (WAYLAND_DISPLAY)\n"); exit(1); }
+    if (!dpy) { fprintf(stderr, "%s: no Wayland display (WAYLAND_DISPLAY)\n", program_invocation_short_name); exit(1); }
     xkb = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     struct wl_registry *reg = wl_display_get_registry(dpy);
     wl_registry_add_listener(reg, &reg_listener, 0);
     wl_display_roundtrip(dpy);
-    if (!comp || !shm || !wm) { fprintf(stderr, "atlas-files: the compositor lacks xdg-shell\n"); exit(1); }
+    if (!comp || !shm || !wm) { fprintf(stderr, "%s: the compositor lacks xdg-shell\n", program_invocation_short_name); exit(1); }
     rep_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
     tim_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
     make_cursor();

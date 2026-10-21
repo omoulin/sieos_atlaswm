@@ -115,7 +115,7 @@ static int load_file(const char *path)
 }
 /* Those found here: the first of each kind. */
 #define TERM_FOOT "foot -T Term --app-id=Term -o colors.background=1b254a -o colors.alpha=0 -o colors.foreground=c9d1ec -o 'font=DejaVu Sans Mono:size=12'"
-static const struct { const char *name, *icon, *cmd, *id; } finds[][6] = {
+static const struct { const char *name, *icon, *cmd, *id; int menu; } finds[][6] = {   /* (menu: in the menu only) */
     /* (terminals named Term, see-through over Atlas's smoked glass (wm.c), its light text, in
      * Atlas's font at 12 points: through their own options, their settings files untouched) */
     { { "Terminal", "terminal", TERM_FOOT, "Term" },
@@ -128,6 +128,7 @@ static const struct { const char *name, *icon, *cmd, *id; } finds[][6] = {
       { "Text editor", "editor", "mousepad", "org.xfce.mousepad" }, { "Text editor", "editor", "kate", "org.kde.kate" }, { 0 }, { 0 } },
     { { "Web", "web", "firefox", "firefox" }, { "Web", "web", "firefox-esr", "firefox-esr" }, { "Web", "web", "chromium", "chromium" },
       { "Web", "web", "epiphany", "org.gnome.Epiphany" }, { 0 }, { 0 } },
+    { { "Network", "network", "atlas-net", "atlas.net", 1 }, { "Network", "network", "nm-connection-editor", "nm-connection-editor", 1 }, { 0 } },
 };
 const char *config_path(const char *name, char *buf, size_t cap)   /* ~/.config/atlas/NAME */
 {
@@ -155,8 +156,8 @@ void bar_reload(void)
                 char beside[PATH_MAX];                   /* (atlas-files not installed: the one built next to atlas_wm) */
                 ssize_t n = readlink("/proc/self/exe", beside, sizeof beside - 32);
                 if (n > 0) { beside[n] = 0; snprintf(strrchr(beside, '/') + 1, 32, "%s", finds[k][i].cmd); }
-                if (on_path(finds[k][i].cmd)) { add_app(finds[k][i].name, finds[k][i].icon, finds[k][i].cmd, finds[k][i].id, 1); break; }
-                if (n > 0 && !strchr(finds[k][i].cmd, ' ') && access(beside, X_OK) == 0) { add_app(finds[k][i].name, finds[k][i].icon, beside, finds[k][i].id, 1); break; }
+                if (on_path(finds[k][i].cmd)) { add_app(finds[k][i].name, finds[k][i].icon, finds[k][i].cmd, finds[k][i].id, !finds[k][i].menu); break; }
+                if (n > 0 && !strchr(finds[k][i].cmd, ' ') && access(beside, X_OK) == 0) { add_app(finds[k][i].name, finds[k][i].icon, beside, finds[k][i].id, !finds[k][i].menu); break; }
             }
     find_terminal();
 }

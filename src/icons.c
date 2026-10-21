@@ -4,7 +4,7 @@
  * whole screen pixels, so they stay sharp at every zoom.
  * The SIEOS logo is a picture (logo.c, made from logo-glass.svg by
  * tools/mklogo.py), smoothly scaled. From SIEOS's user/atlas/icons.c,
- * with a globe for web browsers.
+ * with a globe for web browsers and a Wi-Fi fan for the network.
  *
  * Part of atlas_wm. (c) Olivier Moulin. SPDX-License-Identifier: GPL-3.0-only
  */
@@ -21,7 +21,7 @@ void logo(int x, int y, int scale)                       /* (16 x scale wide: th
 }
 
 /* One family on a 16 x 16 grid: an ink outline (#), white faces (w), one
- * amber (a) or blue (b) fill (SIEOS's maps; the globe is atlas_wm's). */
+ * amber (a) or blue (b) fill (SIEOS's maps; the globe and the fan are atlas_wm's). */
 static const char *const maps[I_N][16] = {
     [I_TERM] = {
         "................", ".##############.", ".#wwwwwwwwwwww#.", ".##############.",
@@ -83,6 +83,11 @@ static const char *const maps[I_N][16] = {
         ".#bbbwbbbbwbbb#.", ".#wwwwwwwwwwww#.", ".#bbbwbbbbwbbb#.", ".#bbbwbbbbwbbb#.",
         ".#bbbwbbbbwbbb#.", ".#bbbwbbbbwbbb#.", ".#wwwwwwwwwwww#.", ".#bbbwbbbbwbbb#.",
         "..#bbbwbbwbbb#..", "...##bbwwbb##...", ".....######.....", "................" },
+    [I_NET] = {
+        "................", "....########....", "..##wwwwwwww##..", ".#wwww####wwww#.",
+        "#ww###....###ww#", ".##...####...##.", "....##wwww##....", "...#ww####ww#...",
+        "....##....##....", "................", "......####......", ".....#aaaa#.....",
+        ".....#aaaa#.....", "......####......", "................", "................" },
 };
 /* the palette of all of them */
 static const char keys[] = "#wab";
@@ -116,7 +121,7 @@ static const struct { const char *name; int icon; } names[] = {
     { "terminal", I_TERM }, { "assistant", I_SIA }, { "folder", I_FOLDER }, { "files", I_FOLDER },
     { "file", I_FILE }, { "editor", I_FILE }, { "settings", I_SETTINGS }, { "app", I_APP },
     { "window", I_WINDOW }, { "pins", I_PINS }, { "git", I_GIT }, { "mail", I_MAIL },
-    { "camera", I_CAM }, { "web", I_WEB }, { "browser", I_WEB },
+    { "camera", I_CAM }, { "web", I_WEB }, { "browser", I_WEB }, { "network", I_NET }, { "wifi", I_NET },
 };
 const char *icon_name(int icon)
 {
@@ -144,6 +149,7 @@ int icon_for_app(const char *id)
         { "librewolf", I_WEB }, { "brave", I_WEB }, { "qutebrowser", I_WEB },
         { "mail", I_MAIL }, { "thunderbird", I_MAIL }, { "evolution", I_MAIL }, { "geary", I_MAIL },
         { "git", I_GIT }, { "cheese", I_CAM }, { "camera", I_CAM }, { "snapshot", I_CAM },
+        { "atlas.net", I_NET }, { "network", I_NET }, { "nm-connection", I_NET }, { "nm-applet", I_NET },
     };
     char low[128];
     size_t n = 0;
