@@ -311,10 +311,12 @@ The environment variable `ATLAS_ZOOM` overrides the look file's size.
 `name | icon | command | app_id | dock` (see `apps.example`); the last field
 is `dock` (in the menu and on the Deskbar; the default) or `menu` (the
 menu only, and a Deskbar row while it runs). The icons are
-terminal, folder, editor, web, mail, settings, git, camera, app and window.
+terminal, folder, editor, web, mail, settings, git, camera, network, app and window.
 The app_id tells which windows belong to the app: it is what the tab's
 row shows with a window's tab up. Without this file, the Deskbar lists the
-terminal, file manager, text editor and web browser it finds.
+terminal, file manager, text editor and web browser it finds. A file that
+does not name `atlas-net` (one written before it) is given *Network* in the
+menu, once: removed in Settings, it stays out.
 
 ### Scaling
 

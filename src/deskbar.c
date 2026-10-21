@@ -97,12 +97,15 @@ static char *trim(char *s)
     while (n && (s[n - 1] == ' ' || s[n - 1] == '\t' || s[n - 1] == '\n' || s[n - 1] == '\r')) s[--n] = 0;
     return s;
 }
+static int saw_net;                                      /* the file names atlas-net (in a row or a comment) */
 static int load_file(const char *path)
 {
     FILE *f = fopen(path, "r");
     if (!f) return 0;
     char line[512];
+    saw_net = 0;
     while (fgets(line, sizeof line, f)) {
+        if (strstr(line, "atlas-net")) saw_net = 1;
         char *p = trim(line), *fld[5] = { 0 };
         if (!*p || *p == '#') continue;
         int k = 0;
@@ -145,20 +148,26 @@ static void find_terminal(void)
     const char *t = getenv("TERMINAL");
     if (!srv.terminal[0] && t && *t) snprintf(srv.terminal, sizeof srv.terminal, "%s", t);
 }
+static void add_found(size_t k)                          /* the first of finds[k] on this computer */
+{
+    for (int i = 0; i < 6 && finds[k][i].name; i++) {
+        char beside[PATH_MAX];                           /* (atlas-files not installed: the one built next to atlas_wm) */
+        ssize_t n = readlink("/proc/self/exe", beside, sizeof beside - 32);
+        if (n > 0) { beside[n] = 0; snprintf(strrchr(beside, '/') + 1, 32, "%s", finds[k][i].cmd); }
+        if (on_path(finds[k][i].cmd)) { add_app(finds[k][i].name, finds[k][i].icon, finds[k][i].cmd, finds[k][i].id, !finds[k][i].menu); break; }
+        if (n > 0 && !strchr(finds[k][i].cmd, ' ') && access(beside, X_OK) == 0) { add_app(finds[k][i].name, finds[k][i].icon, beside, finds[k][i].id, !finds[k][i].menu); break; }
+    }
+}
 void bar_reload(void)
 {
     napps = 0;
     char path[512];
     config_path("apps", path, sizeof path);
     if (!load_file(path))
+        for (size_t k = 0; k < sizeof finds / sizeof *finds; k++) add_found(k);
+    else if (!saw_net)                                   /* a list from before atlas-net: Network added, once (apps_save) */
         for (size_t k = 0; k < sizeof finds / sizeof *finds; k++)
-            for (int i = 0; i < 6 && finds[k][i].name; i++) {
-                char beside[PATH_MAX];                   /* (atlas-files not installed: the one built next to atlas_wm) */
-                ssize_t n = readlink("/proc/self/exe", beside, sizeof beside - 32);
-                if (n > 0) { beside[n] = 0; snprintf(strrchr(beside, '/') + 1, 32, "%s", finds[k][i].cmd); }
-                if (on_path(finds[k][i].cmd)) { add_app(finds[k][i].name, finds[k][i].icon, finds[k][i].cmd, finds[k][i].id, !finds[k][i].menu); break; }
-                if (n > 0 && !strchr(finds[k][i].cmd, ' ') && access(beside, X_OK) == 0) { add_app(finds[k][i].name, finds[k][i].icon, beside, finds[k][i].id, !finds[k][i].menu); break; }
-            }
+            if (!strcmp(finds[k][0].cmd, "atlas-net")) add_found(k);
     find_terminal();
 }
 
@@ -207,6 +216,7 @@ void apps_save(void)                                     /* ~/.config/atlas/apps
     FILE *f = fopen(path, "w");
     if (f) {
         fputs("# The apps: name | icon | command | app_id | dock (a row on the Deskbar) or menu (the menu only); written by Settings\n", f);
+        fputs("# (a list without atlas-net, the Network, is given it once; removed, it stays out)\n", f);
         for (int i = 0; i < napps; i++)
             fprintf(f, "%s | %s | %s | %s | %s\n", apps[i].name, icon_name(apps[i].icon), apps[i].cmd, apps[i].id, apps[i].dock ? "dock" : "menu");
         fclose(f);
